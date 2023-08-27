@@ -61,6 +61,7 @@
 ;;; Copyright © 2023 Alexey Abramov <levenson@mmer.org>
 ;;; Copyright © 2023 Bruno Victal <mirai@makinata.eu>
 ;;; Copyright © 2023 Tobias Kortkamp <tobias.kortkamp@gmail.com>
+;;; Copyright © 2023 Lu Hui <luhux76@gmail.com>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -385,9 +386,9 @@ interface and is based on GNU Guile.")
                (base32
                 "0v9ld9gbqdp5ya380fbkdsxa0iqr90gi6yk004ccz3n792nq6wlj"))))
     (native-inputs (modify-inputs (package-native-inputs shepherd-0.9)
-                     (replace "guile-fibers" guile-fibers-1.3)))
+                     (replace "guile-fibers" guile-fibers-1.1)))
     (inputs (modify-inputs (package-inputs shepherd-0.9)
-              (replace "guile-fibers" guile-fibers-1.3)))))
+              (replace "guile-fibers" guile-fibers-1.1)))))
 
 (define-public shepherd shepherd-0.9)
 
