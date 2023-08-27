@@ -1,5 +1,6 @@
 ;;; GNU Guix --- Functional package management for GNU
 ;;; Copyright © 2022 Mathieu Othacehe <othacehe@gnu.org>
+;;; Copyright © 2023 Lu Hui <luhux76@gmail.com>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -19,11 +20,19 @@
 (define-module (guix platforms mips)
   #:use-module (guix platform)
   #:use-module (guix records)
-  #:export (mips64-linux))
+  #:export (mips64-linux
+            mips-linux))
 
 (define mips64-linux
   (platform
    (target "mips64el-linux-gnu")
    (system "mips64el-linux")
+   (linux-architecture "mips")
+   (glibc-dynamic-linker "/lib/ld.so.1")))
+
+(define mips-linux
+  (platform
+   (target "mipsel-linux-gnu")
+   (system "mipsel-linux")
    (linux-architecture "mips")
    (glibc-dynamic-linker "/lib/ld.so.1")))

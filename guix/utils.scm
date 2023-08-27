@@ -18,6 +18,7 @@
 ;;; Copyright © 2022 Antero Mejr <antero@mailbox.org>
 ;;; Copyright © 2023 Philip McGrath <philip@philipmcgrath.com>
 ;;; Copyright © 2023 Janneke Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright © 2023 Lu Hui <luhux76@gmail.com>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -103,6 +104,7 @@
             target-powerpc?
             target-riscv64?
             target-mips64el?
+            target-mipsel?
             target-64bit?
             target-little-endian?
             ar-for-target
@@ -742,6 +744,10 @@ architecture (x86_64)?"
 (define* (target-mips64el? #:optional (target (or (%current-target-system)
                                                   (%current-system))))
   (string-prefix? "mips64el-" target))
+
+(define* (target-mipsel? #:optional (target (or (%current-target-system)
+                                                (%current-system))))
+  (string-prefix? "mipsel-" target))
 
 (define* (target-64bit? #:optional (system (or (%current-target-system)
                                                (%current-system))))
