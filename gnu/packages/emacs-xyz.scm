@@ -455,7 +455,7 @@ e.g. emacs-geiser-guile for Guile.")
 (define-public emacs-gptel
   (package
     (name "emacs-gptel")
-    (version "0.3.6")
+    (version "0.4.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -464,7 +464,7 @@ e.g. emacs-geiser-guile for Guile.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1ykqq763sm0km167vyqxcg3jq4g1dzrvn9zwm9q927v83ijh6pf9"))))
+                "1aac0jds8hzyfvav06mhqm32v81swrnvyv0ldrkd7qxc2b1x4q7n"))))
     (build-system emacs-build-system)
     (arguments
      (list
@@ -18089,7 +18089,7 @@ in Emacs.")
 (define-public emacs-php-mode
   (package
     (name "emacs-php-mode")
-    (version "1.24.3")
+    (version "1.25.0")
     (source
      (origin
        (method git-fetch)
@@ -18098,7 +18098,7 @@ in Emacs.")
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "01yw10z1kf38nz4z3gmpx56wmc7a7caf4nk6rccg0w4kklqw1h94"))))
+        (base32 "1vwbxaxjvz2hhb6pli1bh1qlrc2r991zl4i18wiwk78ffanqx6q0"))))
     (build-system emacs-build-system)
     (arguments
      (list
@@ -37363,11 +37363,11 @@ with popups, which also work in the terminal.")
 
 (define-public emacs-corfu-doc-terminal
   ;; Upstream does not tag releases, version taken from package header.
-  (let ((commit "d8945c64b52d76e864b767b3048674f222daf80b")
+  (let ((commit "be9fd5cd6c293dea862f1a1877378f1391e6a7e5")
         (revision "0"))
     (package
       (name "emacs-corfu-doc-terminal")
-      (version (git-version "0.5" revision commit))
+      (version (git-version "0.9" revision commit))
       (source
        (origin
          (method git-fetch)
@@ -37377,7 +37377,7 @@ with popups, which also work in the terminal.")
            (commit commit)))
          (file-name (git-file-name name version))
          (sha256
-          (base32 "0j0dd8np5x93wic22bc5i9h7bq2gj700n4fh11dzzgsj14lv2r5k"))))
+          (base32 "0vx5r9v2gx747zsz4x1dgrkvl1iya9pcgvcbghc0pwjs3jfi6r0k"))))
       (build-system emacs-build-system)
       (propagated-inputs
        (list emacs-corfu emacs-corfu-doc emacs-corfu-terminal emacs-popon))
@@ -37710,12 +37710,11 @@ latest Emacs.")
 
 (define-public emacs-flim-lb
   ;; No release since Nov 28, 2007.
-  (let ((version "1.14.9")
-        (revision "136")
-        (commit "2cf5a7891090faca8de725b1d3743dcedf233ea2"))
+  (let ((commit "80b8121f05a5a0d7fcfe3e54085467a646dd2028")
+        (revision "137"))
     (package
       (name "emacs-flim-lb")
-      (version (git-version version revision commit))
+      (version (git-version "1.14.9" revision commit))
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
@@ -37724,7 +37723,7 @@ latest Emacs.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1wsnipyl3blldcl8ynmpj1mxfvl7kjmxd8gapl83vqd3r0l9cr6q"))))
+                  "02shd2mp9ywncn0wxgrijn0i8fa69kfx1y6nh5jjd64dyiczmskk"))))
       (build-system emacs-build-system)
       (propagated-inputs (list emacs-apel-lb emacs-oauth2))
       (home-page "https://www.emacswiki.org/emacs/WanderLust")
@@ -37738,12 +37737,11 @@ Emacs.")
 
 (define-public emacs-semi-epg
   ;; No release since Dec 24, 2003.
-  (let ((version "1.14.6")
-        (revision "242")
-        (commit "7d8df0ef2f483e2dc063a72099295f467e6bc2c8"))
+  (let ((commit "9370961ddcee78e389e44b36d38c3d93f8351619")
+        (revision "246"))
     (package
       (name "emacs-semi-epg")
-      (version (git-version version revision commit))
+      (version (git-version "1.14.6" revision commit))
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
@@ -37752,9 +37750,10 @@ Emacs.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "01dn91xjcl7p5rnbgyh5l4kdlqx31s0gw5vh7hhcapbiq8rihmjd"))))
+                  "13f267j0mrji9cvjhq129nslrj2gwvq7ibsz384a4qilxf5rhccc"))))
       (build-system emacs-build-system)
-      (propagated-inputs (list emacs-bbdb-vcard emacs-flim-lb))
+      (propagated-inputs (list emacs-flim-lb))
+      (inputs (list emacs-bbdb-vcard))
       (home-page "https://www.emacswiki.org/emacs/WanderLust")
       (synopsis "Library to provide MIME feature for GNU Emacs")
       (description

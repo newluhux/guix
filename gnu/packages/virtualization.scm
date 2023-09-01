@@ -29,6 +29,7 @@
 ;;; Copyright © 2022 Arun Isaac <arunisaac@systemreboot.net>
 ;;; Copyright © 2022 Zhu Zihao <all_but_last@163.com>
 ;;; Copyright © 2023 Juliana Sims <juli@incana.org>
+;;; Copyright © 2023 Ahmad Draidi <a.r.draidi@redscript.org>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -75,6 +76,7 @@
   #:use-module (gnu packages figlet)
   #:use-module (gnu packages firmware)
   #:use-module (gnu packages flex)
+  #:use-module (gnu packages fonts)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gettext)
@@ -1915,83 +1917,81 @@ Machine Protocol.")
 (define-public looking-glass-client
   (package
     (name "looking-glass-client")
-    (version "B5")
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/gnif/LookingGlass")
-             (commit version)
-             (recursive? #t)))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32
-         "09mn544x5hg1z31l92ksk7fi7yj9r8xdk0dcl9fk56ivcr452ylm"))))
+    (version "B6")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://looking-glass.io/artifact/" version
+                                  "/source"))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "15d7wwbzfw28yqbz451b6n33ixy50vv8acyzi8gig1mq5a8gzdib"))))
     (build-system cmake-build-system)
-    (inputs
-     (list bash-minimal
-           fontconfig
-           freetype
-           glu
-           gmp
-           libglvnd
-           libiberty
-           libx11
-           libxcursor
-           libxfixes
-           libxi
-           libxinerama
-           libxkbcommon
-           libxpresent
-           libxrandr
-           libxscrnsaver
-           mesa
-           openssl
-           sdl2
-           sdl2-ttf
-           spice-protocol
-           wayland
-           wayland-protocols
-           `(,zlib "static")))
-    (native-inputs (list libconfig nettle pkg-config))
+    (inputs (list bash-minimal
+                  font-dejavu
+                  fontconfig
+                  freetype
+                  glu
+                  gmp
+                  libglvnd
+                  libiberty
+                  libsamplerate
+                  libx11
+                  libxcursor
+                  libxfixes
+                  libxi
+                  libxinerama
+                  libxkbcommon
+                  libxpresent
+                  libxrandr
+                  libxscrnsaver
+                  mesa
+                  pipewire
+                  pulseaudio
+                  spice-protocol
+                  wayland
+                  wayland-protocols
+                  `(,zlib "static")))
+    (native-inputs (list nettle pkg-config))
     (arguments
-     `(#:tests? #f ;; No tests are available.
-       #:make-flags '("CC=gcc")
-       #:phases (modify-phases %standard-phases
-                  (add-before 'configure 'chdir-to-client
-                    (lambda* (#:key outputs #:allow-other-keys)
-                      (chdir "client")
-                      #t))
-                  (replace 'install
-                    (lambda* (#:key outputs #:allow-other-keys)
-                      (install-file "looking-glass-client"
-                                    (string-append (assoc-ref outputs "out")
-                                                   "/bin"))
-                      #t))
-                  (add-after 'install 'wrapper
-                    (lambda* (#:key inputs outputs #:allow-other-keys)
-                      (wrap-program
-                          (string-append (assoc-ref outputs "out")
-                                         "/bin/looking-glass-client")
-                        `("LD_LIBRARY_PATH" ":" prefix
-                          ,(map (lambda (name)
-                                  (let ((input (assoc-ref inputs name)))
-                                    (string-append input "/lib")))
-                                '("gmp"
-                                  "libxi"
-                                  "nettle"
-                                  "mesa"
-                                  "wayland"
-                                  "fontconfig-minimal"
-                                  "freetype"
-                                  "libx11"
-                                  "libxfixes"
-                                  "libxscrnsaver"
-                                  "libxinerama"))))
-                      #t)))))
+     (list #:tests? #f ;No tests are available.
+           ;; Package uses "-march=native" by default. We disable that to build with the
+           ;; lowest supported architecture for reproducibility and CPU compatibility.
+           #:configure-flags #~'("-DOPTIMIZE_FOR_NATIVE=OFF")
+           #:make-flags #~'("CC=gcc")
+           #:phases #~(modify-phases %standard-phases
+                        (add-before 'configure 'chdir-to-client
+                          (lambda* (#:key outputs #:allow-other-keys)
+                            (chdir "client")))
+                        (replace 'install
+                          (lambda* (#:key outputs #:allow-other-keys)
+                            (install-file "looking-glass-client"
+                                          (string-append (assoc-ref outputs
+                                                                    "out")
+                                                         "/bin"))))
+                        (add-after 'install 'wrapper
+                          (lambda* (#:key inputs outputs #:allow-other-keys)
+                            (wrap-program (string-append (assoc-ref outputs
+                                                                    "out")
+                                           "/bin/looking-glass-client")
+                              `("LD_LIBRARY_PATH" ":" prefix
+                                ,(map (lambda (name)
+                                        (let ((input (assoc-ref inputs name)))
+                                          (string-append input "/lib")))
+                                      '("gmp" "libxi"
+                                        "nettle"
+                                        "mesa"
+                                        "wayland"
+                                        "fontconfig-minimal"
+                                        "freetype"
+                                        "libx11"
+                                        "libxfixes"
+                                        "libxscrnsaver"
+                                        "libxinerama")))))))))
     (home-page "https://looking-glass.io/")
     (synopsis "KVM Frame Relay (KVMFR) implementation")
-    (description "Looking Glass allows the use of a KVM (Kernel-based Virtual
+    (description
+     "Looking Glass allows the use of a KVM (Kernel-based Virtual
 Machine) configured for VGA PCI Pass-through without an attached physical
 monitor, keyboard or mouse.  It displays the VM's rendered contents on your
 main monitor/GPU.")
@@ -2002,7 +2002,7 @@ main monitor/GPU.")
 (define-public runc
   (package
     (name "runc")
-    (version "1.1.1")
+    (version "1.1.9")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -2011,7 +2011,7 @@ main monitor/GPU.")
               (file-name (string-append name "-" version ".tar.xz"))
               (sha256
                (base32
-                "0jx56x49dgkygdbrfb3pmxycy1n37arj97jra8n422dj36xz1hbm"))))
+                "1hhxqwg0mblrgv2aim3scfd9xg13l6i22j124sdma5sf2fzgx5bn"))))
     (build-system go-build-system)
     (arguments
      '(#:import-path "github.com/opencontainers/runc"
